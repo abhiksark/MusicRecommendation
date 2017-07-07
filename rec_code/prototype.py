@@ -29,7 +29,7 @@ song_df.head()
 #Length of the dataset
 len(song_df)
 
-
+#inspect = song_df.head(500)
 #Create a subset as Data is large and processing might take a lot of time 
 song_df = song_df.head(5000)
 
@@ -127,3 +127,31 @@ for i in range(0,len(all_songs)):
         else:
             cooccurence_matrix[j,i] = 0
 
+
+
+
+
+user_sim_scores = cooccurence_matrix.sum(axis=0)/float(cooccurence_matrix.shape[0])
+user_sim_scores = np.array(user_sim_scores)[0].tolist()
+ 
+#Sort the indices of user_sim_scores based upon their value
+#Also maintain the corresponding score
+sort_index = sorted(((e,i) for i,e in enumerate(list(user_sim_scores))), reverse=True)
+
+#Create a dataframe from the following
+columns = ['user_id', 'song', 'score', 'rank']
+#index = np.arange(1) # array of numbers for the number of samples
+df = pandas.DataFrame(columns=columns)
+user = users[0]
+#Fill the dataframe with top 10 item based recommendations
+rank = 1 
+for i in range(0,len(sort_index)):
+    if ~np.isnan(sort_index[i][0]) and all_songs[sort_index[i][1]] not in user_songs and rank <= 10:
+        df.loc[len(df)]=[user,all_songs[sort_index[i][1]],sort_index[i][0],rank]
+        rank = rank+1
+        
+if df.shape[0] == 0:
+    print("The current user has no songs for training the item similarity based recommendation model.")
+    print -1
+else:
+    print df
