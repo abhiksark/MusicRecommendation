@@ -92,6 +92,8 @@ def get_all_items_train_data():
 all_songs = get_all_items_train_data()
 user_songs = all_songs
 
+
+#user_songs = get_user_items(users[4])
   
 ####################################
 #Get users for all songs in user_songs.
@@ -127,8 +129,8 @@ for i in range(0,len(all_songs)):
         else:
             cooccurence_matrix[j,i] = 0
 
-
-
+user_songs = get_user_items(users[4])
+user = users[4]
 
 
 user_sim_scores = cooccurence_matrix.sum(axis=0)/float(cooccurence_matrix.shape[0])
@@ -142,7 +144,6 @@ sort_index = sorted(((e,i) for i,e in enumerate(list(user_sim_scores))), reverse
 columns = ['user_id', 'song', 'score', 'rank']
 #index = np.arange(1) # array of numbers for the number of samples
 df = pandas.DataFrame(columns=columns)
-user = users[0]
 #Fill the dataframe with top 10 item based recommendations
 rank = 1 
 for i in range(0,len(sort_index)):
@@ -155,3 +156,6 @@ if df.shape[0] == 0:
     print -1
 else:
     print df
+    
+    
+    
