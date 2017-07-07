@@ -15,7 +15,6 @@ https://github.com/turi-code/tutorials/blob/master/notebooks/recsys_rank_10K_son
 
 """
 
-get_ipython().magic('matplotlib inline')
 
 import pandas
 from sklearn.cross_validation import train_test_split
@@ -36,87 +35,55 @@ frames = [song_df_1_1,song_df_1_2]
 song_df_1 = pandas.concat(frames)
 song_df_2 =  pandas.read_csv("song_data.csv")
 
-#Merge the two dataframes above to create input dataframe for recommender systems
+
+#Merge two dataframes to combine the songs and user 
 song_df = pandas.merge(song_df_1, song_df_2.drop_duplicates(['song_id']), on="song_id", how="left") 
 
-
-
+#inspection 
 song_df.head()
-# ## Length of the dataset
+
+#Length of the dataset
 len(song_df)
 
 
-# ## Create a subset of the dataset
+#Create a subset as Data is large and processing might take a lot of time 
 song_df = song_df.head(5000)
 
 #Merge song title and artist_name columns to make a merged column
-song_df['song'] = song_df['title'].map(str) + " - " + song_df['artist_name']
+song_df['song'] = song_df['title'].map(str) + " - " + song_df['artist_name'] 
 
-# ## Showing the most popular songs in the dataset
+#Showing the most popular songs ( Content based recommendation)
 
-
-song_grouped = song_df.groupby(['song']).agg({'listen_count': 'count'}).reset_index()
+"""song_grouped = song_df.groupby(['song']).agg({'listen_count': 'count'}).reset_index()
 grouped_sum = song_grouped['listen_count'].sum()
 song_grouped['percentage']  = song_grouped['listen_count'].div(grouped_sum)*100
 song_grouped.sort_values(['listen_count', 'song'], ascending = [0,1])
+"""
 
-
-# ## Count number of unique users in the dataset
-
-
+#Count number of unique users in the dataset
 users = song_df['user_id'].unique()
 len(users)
 
-
-# ## Quiz 1. Count the number of unique songs in the dataset
-
-
-###Fill in the code here
+#Count Number of Unique songs in the Database 
 songs = song_df['song'].unique()
 len(songs)
 
-
-# # Create a song recommender
-
-
+#test train split 
 train_data, test_data = train_test_split(song_df, test_size = 0.20, random_state=0)
 print(train_data.head(5))
 
-
-# ## Simple popularity-based recommender class (Can be used as a black box)
-
-
 #Recommenders.popularity_recommender_py
-
-
-# ### Create an instance of popularity based recommender class
-
-
-
+#using a function from different py file and making instance of that
 pm = Recommenders.popularity_recommender_py()
 pm.create(train_data, 'user_id', 'song')
-
-
-# ### Use the popularity model to make some predictions
-
-
+#using the same predictor 
 user_id = users[5]
 pm.recommend(user_id)
-
-
-# ### Quiz 2: Use the popularity based model to make predictions for the following user id (Note the difference in recommendations from the first user id).
-
-
-###Fill in the code here
+#different user 
 user_id = users[8]
 pm.recommend(user_id)
 
 
-# ## Build a song recommender with personalization
-# 
-# We now create an item similarity based collaborative filtering model that allows us to make personalized recommendations to each user. 
-
-# ## Class for an item similarity based personalized recommender system (Can be used as a black box)
 
 
 #Recommenders.item_similarity_recommender_py
@@ -215,8 +182,6 @@ print(end - start)
 
 
 # ## Code to plot precision recall curve
-
-
 
 import pylab as pl
 
