@@ -1,7 +1,8 @@
-
-# coding: utf-8
-
-# # Building a song recommender
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+@author: abhik
+"""
 """
 -------------
 Dataset used:
@@ -89,99 +90,50 @@ pm.recommend(user_id)
 #Recommenders.item_similarity_recommender_py
 
 
-# ### Create an instance of item similarity based recommender class
+#Create an instance of item similarity based recommender class
 
 
 is_model = Recommenders.item_similarity_recommender_py()
 is_model.create(train_data, 'user_id', 'song')
 
-
-# ### Use the personalized model to make some song recommendations
-
-
-#Print the songs for the user in training data
+#Personalized Approach
 user_id = users[5]
 user_items = is_model.get_user_items(user_id)
-#
-print("------------------------------------------------------------------------------------")
+
 print("Training data songs for the user userid: %s:" % user_id)
-print("------------------------------------------------------------------------------------")
-
-for user_item in user_items:
+"""for user_item in user_items:
     print(user_item)
-
-print("----------------------------------------------------------------------")
-print("Recommendation process going on:")
-print("----------------------------------------------------------------------")
-
+"""
 #Recommend songs for the user using personalized model
 is_model.recommend(user_id)
-
-
-# ### Quiz 3. Use the personalized model to make recommendations for the following user id. (Note the difference in recommendations from the first user id.)
-
 
 user_id = users[7]
-#Fill in the code here
 user_items = is_model.get_user_items(user_id)
-#
-print("------------------------------------------------------------------------------------")
+
 print("Training data songs for the user userid: %s:" % user_id)
-print("------------------------------------------------------------------------------------")
-
-for user_item in user_items:
+"""for user_item in user_items:
     print(user_item)
-
-print("----------------------------------------------------------------------")
-print("Recommendation process going on:")
-print("----------------------------------------------------------------------")
-
-#Recommend songs for the user using personalized model
+"""
 is_model.recommend(user_id)
 
 
-# ### We can also apply the model to find similar songs to any song in the dataset
 
+###############################################################################
 is_model.get_similar_items(['U Smile - Justin Bieber'])
+is_model.get_similar_items(['Yellow - Coldplay'])
 
-
-# ### Quiz 4. Use the personalized recommender model to get similar songs for the following song.
-
-
-song = 'Yellow - Coldplay'
-###Fill in the code here
-is_model.get_similar_items([song])
-
-
-# # Quantitative comparison between the models
-# 
-# We now formally compare the popularity and the personalized models using precision-recall curves. 
-
-# ## Class to calculate precision and recall (This can be used as a black box)
-
+###############################################################################
 
 #Evaluation.precision_recall_calculator
+#Percentage
+user_sample = 0.20
 
-
-# ## Use the above precision recall calculator class to calculate the evaluation measures
-
-
-start = time.time()
-
-#Define what percentage of users to use for precision recall calculation
-user_sample = 0.05
-
-#Instantiate the precision_recall_calculator class
+"""
 pr = Evaluation.precision_recall_calculator(test_data, train_data, pm, is_model)
-
-#Call method to calculate precision and recall values
+#Precision_recall
 (pm_avg_precision_list, pm_avg_recall_list, ism_avg_precision_list, ism_avg_recall_list) = pr.calculate_measures(user_sample)
 
-end = time.time()
-print(end - start)
-
-
-# ## Code to plot precision recall curve
+#Plot precision recall curve
 
 import pylab as pl
 
@@ -199,83 +151,22 @@ def plot_precision_recall(m1_precision_list, m1_recall_list, m1_label, m2_precis
     pl.legend(loc=9, bbox_to_anchor=(0.5, -0.2))
     pl.show()
 
-
-
-print("Plotting precision recall curves.")
-
 plot_precision_recall(pm_avg_precision_list, pm_avg_recall_list, "popularity_model",
                       ism_avg_precision_list, ism_avg_recall_list, "item_similarity_model")
-
-
-# ### Generate Precision Recall curve using pickled results on a larger data subset(Python 3)
-
-
-print("Plotting precision recall curves for a larger subset of data (100,000 rows) (user sample = 0.005).")
-
-#Read the persisted files 
-pm_avg_precision_list = joblib.load('pm_avg_precision_list_3.pkl')
-pm_avg_recall_list = joblib.load('pm_avg_recall_list_3.pkl')
-ism_avg_precision_list = joblib.load('ism_avg_precision_list_3.pkl')
-ism_avg_recall_list = joblib.load('ism_avg_recall_list_3.pkl')
-
-print("Plotting precision recall curves.")
-plot_precision_recall(pm_avg_precision_list, pm_avg_recall_list, "popularity_model",
-                      ism_avg_precision_list, ism_avg_recall_list, "item_similarity_model")
-
-
-# ### Generate Precision Recall curve using pickled results on a larger data subset(Python 2.7)
-
-
-
-print("Plotting precision recall curves for a larger subset of data (100,000 rows) (user sample = 0.005).")
-
-pm_avg_precision_list = joblib.load('pm_avg_precision_list_2.pkl')
-pm_avg_recall_list = joblib.load('pm_avg_recall_list_2.pkl')
-ism_avg_precision_list = joblib.load('ism_avg_precision_list_2.pkl')
-ism_avg_recall_list = joblib.load('ism_avg_recall_list_2.pkl')
-
-print("Plotting precision recall curves.")
-plot_precision_recall(pm_avg_precision_list, pm_avg_recall_list, "popularity_model",
-                      ism_avg_precision_list, ism_avg_recall_list, "item_similarity_model")
-
-
-# The curve shows that the personalized model provides much better performance over the popularity model. 
-
-# # Matrix Factorization based Recommender System
-"""Using SVD matrix factorization based collaborative filtering recommender system
---------------------------------------------------------------------------------
-
-The following code implements a Singular Value Decomposition (SVD) based matrix factorization collaborative filtering recommender system. The user ratings matrix used is a small matrix as follows:
-
-        Item0   Item1   Item2   Item3
-User0     3        1       2      3
-User1     4        3       4      3
-User2     3        2       1      5
-User3     1        6       5      2
-User4     0        0       5      0
-
-As we can see in the above matrix, all users except user 4 rate all items. The code calculates predicted recommendations for user 4.
 """
-# ### Import the required libraries
 
 
-#Code source written with help from: 
+
 #http://antoinevastel.github.io/machine%20learning/python/2016/02/14/svd-recommender-system.html
 
+
+"""
 import math as mt
 import csv
 from sparsesvd import sparsesvd #used for matrix factorization
 import numpy as np
 from scipy.sparse import csc_matrix #used for sparse matrix
 from scipy.sparse.linalg import * #used for matrix multiplication
-
-#Note: You may need to install the library sparsesvd. Documentation for 
-#sparsesvd method can be found here:
-#https://pypi.python.org/pypi/sparsesvd/
-
-
-# ### Methods to compute SVD and recommendations
-
 
 
 #constants defining the dimensions of our User Rating Matrix (URM)
@@ -334,19 +225,13 @@ uTest_recommended_items = computeEstimatedRatings(urm, U, S, Vt, uTest, K, True)
 print(uTest_recommended_items)
 
 
-# ### Quiz 4
-"""a.) Change the input matrix row for test userid 4 in the user ratings matrix to the following value. Note the difference in predicted recommendations in this case.
-
-i.) [5 0 0 0]
-
-
 (Note*: The predicted ratings by the code include the items already rated by test user as well. This has been left purposefully like this for better understanding of SVD).
 
 SVD tutorial: http://web.mit.edu/be.400/www/SVD/Singular_Value_Decomposition.htm
 # ## Understanding Intuition behind SVD
 SVD result gives three matrices as output: U, S and Vt (T in Vt means transpose). Matrix U represents user vectors and Matrix Vt represents item vectors. In simple terms, U represents users as 2 dimensional points in the latent vector space, and Vt represents items as 2 dimensional points in the same space.
 Next, we print the matrices U, S and Vt and try to interpret them. Think how the points for users and items will look like in a 2 dimensional axis. For example, the following code plots all user vectors from the matrix U in the 2 dimensional space. Similarly, we plot all the item vectors in the same plot from the matrix Vt.
-"""
+
 
 
 get_ipython().magic('matplotlib inline')
@@ -368,3 +253,4 @@ ylim([-0.7, 0.7])
 xlim([-0.7, 0])
 show()
 
+"""
